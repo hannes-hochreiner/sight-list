@@ -1,0 +1,19 @@
+{{#each lists}}
+<div class="list container" id="list-{{id}}">
+  <a href="/list/{{id}}">
+    <h2>{{title}}</h2>
+  </a>
+  <div class="buttons">
+    <div class="button"><a href="/list/{{id}}/kml" download="{{title}}.kml"><img
+          src="/static/icons/download_FILL0_wght400_GRAD0_opsz24.svg" /></a>
+    </div>
+    <div class="button" hx-get="/list/{{id}}/edit" hx-target="#list-{{id}}" hx-swap="outerHTML">
+      <img src="/static/icons/edit_FILL0_wght400_GRAD0_opsz24.svg" />
+    </div>
+    <div class="button" hx-delete="/list/{{id}}" hx-target="#list-{{id}}" hx-swap="outerHTML"
+      hx-confirm="Are you sure you want to delete '{{title}}'?">
+      <img src="/static/icons/delete_FILL0_wght400_GRAD0_opsz24.svg" />
+    </div>
+  </div>
+</div>
+{{/each}}

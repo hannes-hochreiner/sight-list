@@ -1,0 +1,17 @@
+<div class="list container" id="list-{{id}}">
+  <form id='list-form' hx-encoding='multipart/form-data' hx-{{#if fields}}put{{else}}post{{/if}}="/list/{{id}}"
+    hx-target="#lists">
+    <input type='text' name='title' id="title" placeholder="Title" class="h1" required value="{{fields.title}}"></input>
+    <input type="hidden" name="version" id="version" value="{{version}}" />
+    <div class="buttons">
+      {{#if fields}}
+      <div class="button" hx-get="/list/{{id}}/edit" hx-target="#list-{{id}}" hx-swap="outerHTML">
+        <img src="/static/icons/sync_FILL0_wght400_GRAD0_opsz24.svg" />
+      </div>
+      {{/if}}
+      <button class="button">
+        <img src="/static/icons/done_FILL0_wght400_GRAD0_opsz24.svg" />
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+{{> head}}
+
+<body>
+  <h1>Sight<em>List</em></h1>
+  <div id="error"></div>
+  <div class="container">
+    <h1>All Lists</h1>
+    <div class="buttons">
+      <div class="button" hx-get="/list/new" hx-target="#lists" hx-swap="afterbegin">
+        <img src="/static/icons/add_FILL0_wght400_GRAD0_opsz24.svg" />
+      </div>
+    </div>
+  </div>
+  <div class="lists" id="lists">
+    {{> lists}}
+  </div>
+</body>
+
+</html>

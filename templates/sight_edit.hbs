@@ -1,0 +1,42 @@
+<div id="sight-{{id}}" class="sight container">
+  <script>
+    var latlng = L.latLng({{#if fields}}{{fields.lat}}, {{fields.long}}{{else}}0, 0{{/if}});
+    var sight_edit_map_{{js_id}} = L.map('sight_edit_map_{{js_id}}').setView(latlng, 12);
+  
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(sight_edit_map_{{js_id}});
+  
+    L.control.scale().addTo(sight_edit_map_{{js_id}});
+  
+    sight_edit_map_{{js_id}}.addEventListener('click', event => {
+      sight_edit_marker_{{js_id}}.setLatLng(event.latlng);
+      document.getElementById('lat').value = event.latlng.lat.toFixed(10);
+      document.getElementById('long').value = event.latlng.lng.toFixed(10);
+    });
+
+    var sight_edit_marker_{{js_id}} = L.marker(latlng).addTo(sight_edit_map_{{js_id}});
+  </script>
+  <form id='sight-form' hx-encoding='multipart/form-data' hx-{{#if fields}}put{{else}}post{{/if}}="/sight/{{id}}"
+    hx-target="#sight-list-{{list_id}}">
+    <div class="fields">
+      <input type="text" class="h1" name="title" id="title" placeholder="Title" value="{{fields.title}}" required />
+      <div id="sight_edit_map_{{js_id}}" class="map"></div>
+      <input type="number" step="0.0000000001" name="lat" id="lat" placeholder="Latitude" value="{{fields.lat}}" required />
+      <input type="number" step="0.0000000001" name="long" id="long" placeholder="Longitude" value="{{fields.long}}" required />
+      <textarea name="description" id="description" cols="60" rows="10" placeholder="Description">{{fields.description}}</textarea>
+    </div>
+    <input type="hidden" name="version" id="version" value="{{version}}" />
+    <input type="hidden" name="list_id" id="list_id" value="{{list_id}}" />
+    <div class="buttons">
+      {{#if fields}}
+      <div class="button" hx-get="/sight/{{id}}" hx-target="#sight-{{id}}" hx-swap="outerHTML">
+        <img src="/static/icons/sync_FILL0_wght400_GRAD0_opsz24.svg" />
+      </div>
+      {{/if}}
+      <button class="button">
+        <img src="/static/icons/done_FILL0_wght400_GRAD0_opsz24.svg" />
+      </button>
+    </div>
+  </form>
+</div>

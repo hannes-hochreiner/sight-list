@@ -1,0 +1,19 @@
+{{#each sights}}
+<div id="sight-{{id}}" class="sight container">
+  <h1>{{title}}</h1>
+  <div>{{{description}}}</div>
+  <div class="buttons">
+    {{!-- <a href="https://openstreetmap.org/#map=13/{{lat}}/{{long}}" target=" _blank">
+      <div class="button"><img src="/static/icons/map_FILL0_wght400_GRAD0_opsz24.svg" /></div>
+    </a> --}}
+    <div class="button" hx-on:click="marker_{{js_id}}.openPopup(); map.panTo([{{lat}}, {{long}}]); location.href = '#map';"><img src="/static/icons/map_FILL0_wght400_GRAD0_opsz24.svg" /></div>
+    <div class="button" hx-get="/sight/{{id}}" hx-target="#sight-{{id}}" hx-swap="outerHTML">
+      <img src="/static/icons/edit_FILL0_wght400_GRAD0_opsz24.svg" />
+    </div>
+    <div class="button" hx-delete="/sight/{{id}}" hx-target="#sight-{{id}}" hx-swap="outerHTML"
+      hx-confirm="Are you sure you want to delete '{{title}}'?">
+      <img src="/static/icons/delete_FILL0_wght400_GRAD0_opsz24.svg" />
+    </div>
+  </div>
+</div>
+{{/each}}
