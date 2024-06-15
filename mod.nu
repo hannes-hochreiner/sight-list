@@ -29,3 +29,7 @@ export def recreate_db [] {
   remove_db
   create_db
 }
+
+export def nix-build [] {
+  ^nix build
+}
