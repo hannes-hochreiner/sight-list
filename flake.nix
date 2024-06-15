@@ -23,7 +23,7 @@
 
         inherit (pkgs) lib;
 
-        craneLib = crane.lib.${system}.overrideToolchain
+        craneLib = (crane.mkLib nixpkgs.legacyPackages.${system}).overrideToolchain
             fenix.packages.${system}.minimal.toolchain;
         sight-list = craneLib.buildPackage {
           src = lib.cleanSourceWith {
