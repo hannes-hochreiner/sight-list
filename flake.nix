@@ -21,11 +21,22 @@
           inherit system;
         };
 
+        inherit (pkgs) lib;
+
         craneLib = crane.lib.${system}.overrideToolchain
             fenix.packages.${system}.minimal.toolchain;
         sight-list = craneLib.buildPackage {
-          src = craneLib.cleanCargoSource ./.;
-
+          src = lib.cleanSourceWith {
+            src = ./.; # The original, unfiltered source
+            filter = path: type:
+              # (lib.hasSuffix "\.html" path) ||
+              (lib.hasInfix "/static/" path) ||
+              (lib.hasInfix "/templates/" path) ||
+              # Default filter from crane (allow .rs files)
+              (craneLib.filterCargoSources path type)
+            ;
+          };
+          
           buildInputs = [
             # Add additional build inputs here
           ];
