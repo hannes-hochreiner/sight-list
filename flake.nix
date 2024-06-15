@@ -29,6 +29,12 @@
           buildInputs = [
             # Add additional build inputs here
           ];
+
+          postInstall = ''
+            mkdir $out/var
+            cp -r static $out/var
+            cp -r templates $out/var
+          '';
         };
       in
       {
