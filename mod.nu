@@ -33,3 +33,8 @@ export def recreate_db [] {
 export def nix-build [] {
   ^nix build
 }
+
+export def update [] {
+  ^cargo update
+  ^nix flake update
+}
