@@ -11,9 +11,8 @@ use ::sight_list::{
     sight_list_error::SightListError,
 };
 use rocket::{delete, form::Form, fs::FileServer, get, launch, post, put, routes, FromForm};
-use rocket_db_pools::{sqlx, Connection, Database};
+use rocket_db_pools::{sqlx, sqlx::Acquire, Connection, Database};
 use rocket_dyn_templates::Template;
-use sqlx::Acquire;
 use uuid::Uuid;
 
 #[derive(Database)]

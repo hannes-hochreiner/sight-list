@@ -13,7 +13,7 @@ pub enum SightListError {
     #[error("error summing latitudes or longitudes")]
     SumError,
     #[error("error querying database")]
-    SqlxError(#[from] sqlx::Error),
+    RocketSqlxError(#[from] rocket_db_pools::sqlx::Error),
 }
 
 #[rocket::async_trait]
