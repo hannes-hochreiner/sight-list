@@ -2,75 +2,106 @@
   description = "Sight List";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    crane = {
-      url = "github:ipetkov/crane";
-      # inputs.nixpkgs.follows = "nixpkgs";
-    };
-    fenix = {
-      url = "github:nix-community/fenix";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, crane, flake-utils, fenix, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-        };
+  outputs = { self, nixpkgs, rust-overlay, ... }:
+    let
+      system = "x86_64-linux";
 
-        inherit (pkgs) lib;
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ (import rust-overlay) ];
+      };
 
-        craneLib = (crane.mkLib nixpkgs.legacyPackages.${system}).overrideToolchain
-            fenix.packages.${system}.minimal.toolchain;
-        sight-list = craneLib.buildPackage {
-          src = lib.cleanSourceWith {
-            src = ./.; # The original, unfiltered source
-            filter = path: type:
-              # (lib.hasSuffix "\.html" path) ||
-              (lib.hasInfix "/static/" path) ||
-              (lib.hasInfix "/templates/" path) ||
-              # Default filter from crane (allow .rs files)
-              (craneLib.filterCargoSources path type)
-            ;
-          };
-          
-          buildInputs = [
-            # Add additional build inputs here
-          ];
+      rust-bin-custom = pkgs.rust-bin.stable.latest.default.override {
+        extensions = [ "rust-src" "rust-analyzer" ];
+        targets = [ "x86_64-unknown-linux-gnu" ];
+      };
 
-          postInstall = ''
-            mkdir $out/var
-            cp -r static $out/var
-            cp -r templates $out/var
-          '';
-        };
+      sight-list-cargo-toml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
+
+      sight-list-deps = pkgs.stdenv.mkDerivation {
+        pname = "${sight-list-cargo-toml.package.name}-deps";
+        version = sight-list-cargo-toml.package.version;
+        src = ./.;
+        doCheck = false;
+        dontFixup = true;
+        nativeBuildInputs = with pkgs; [ rust-bin-custom ];
+        buildPhase = ''
+          runHook preBuild
+          cd $src
+          mkdir -p $out/cargo_home
+          CARGO_HOME=$out/cargo_home cargo fetch
+          runHook postBuild
+        '';
+        installPhase = ''
+          runHook preInstall
+          cp -r .. $out
+          runHook postInstall
+        '';
+        outputHashAlgo = "sha256";
+        outputHashMode = "recursive";
+        # outputHash = "sha256-CYQALaf3QL+I651FRmBmabeRaZ/NFFJzi5W3Gr7YHv8=";
+        outputHash = pkgs.lib.fakeHash;
+      };
       in
       {
-        checks = {
-          inherit sight-list;
+        packages.${system} = {
+          "sight-list" = pkgs.stdenv.mkDerivation {
+            pname = sight-list-cargo-toml.package.name;
+            version = sight-list-cargo-toml.package.version;
+
+            src = sight-list-deps;
+
+            buildInputs = with pkgs; [
+              rust-bin-custom
+            ];
+
+            dontUnpack = true;
+            dontPatch = true;
+            dontConfigure = true;
+            buildPhase = ''
+              cd $src
+              mkdir -p $out/cargo_target
+              mkdir -p $out/bin
+              CARGO_HOME=$src/cargo_home CARGO_TARGET_DIR=$out/cargo_target cargo build --release --offline --frozen --verbose
+              cp $out/cargo_target/release/sightlist $out/bin/sightlist
+              rm -r $out/cargo_target
+              cp -r static $out/var
+              cp -r templates $out/var
+            '';
+            dontInstall = true;
+
+            # builder = ./builder.sh;
+          };
         };
+        # packages.default = webapp;
 
-        packages.default = sight-list;
+        devShells.${system}.default = pkgs.mkShell {
+          name = "sight-list";
+          
+          # Inherit inputs from checks.
+          # checks = self.checks.${system};
 
-        apps.default = flake-utils.lib.mkApp {
-          drv = sight-list;
-        };
+          shellHook = ''
+            exec zellij -l zellij.kdl
+          '';
+          # Additional dev-shell environment variables can be set directly
+          # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
 
-        devShells.default = pkgs.mkShell {
-          inputsFrom = builtins.attrValues self.checks;
-
-          # Extra inputs can be added here
-          nativeBuildInputs = with pkgs; [
-            cargo
-            rustc
+          # Extra inputs can be added here; cargo and rustc are provided by default.
+          buildInputs = with pkgs; [
+            zellij
+            rust-bin-custom
           ];
         };
-      }
-    );
-  
+      };  
   # nixConfig = {
   #   substituters = [
   #     "https://cache.nixos.org"
