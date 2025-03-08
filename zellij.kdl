@@ -1,6 +1,6 @@
 layout {
     pane {
-        split_direction "vertical"
+        split_direction "horizontal"
         pane {
             command "nu"
         }
