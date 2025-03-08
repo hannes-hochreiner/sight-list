@@ -47,7 +47,7 @@
         '';
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-HG4Z72vz/R7qWZy/8WaN5f/hxsODWnSo24+g36bZpfA=";
+        outputHash = "sha256-ivhXN24UxWOSYVBTVjeExQWmZOGhD14SUDplbQOPotI=";
         # outputHash = pkgs.lib.fakeHash;
       };
       in
@@ -70,8 +70,9 @@
             mkdir -p $out/cargo_target
             mkdir -p $out/bin
             CARGO_HOME=$src/cargo_home CARGO_TARGET_DIR=$out/cargo_target cargo build --release --offline --frozen --verbose
-            cp $out/cargo_target/release/sightlist $out/bin/sightlist
+            cp $out/cargo_target/release/sight-list $out/bin/sight-list
             rm -r $out/cargo_target
+            mkdir -p $out/var
             cp -r static $out/var
             cp -r templates $out/var
           '';
