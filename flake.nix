@@ -47,7 +47,7 @@
         '';
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-ivhXN24UxWOSYVBTVjeExQWmZOGhD14SUDplbQOPotI=";
+        outputHash = "sha256-3cvmF9p2f/zcxBKYt9jD+bGSonhTSuaAMdhx/sKIz3M=";
         # outputHash = pkgs.lib.fakeHash;
       };
       in
