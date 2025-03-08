@@ -42,46 +42,42 @@
         '';
         installPhase = ''
           runHook preInstall
-          cp -r .. $out
+          cp -r . $out
           runHook postInstall
         '';
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        # outputHash = "sha256-CYQALaf3QL+I651FRmBmabeRaZ/NFFJzi5W3Gr7YHv8=";
-        outputHash = pkgs.lib.fakeHash;
+        outputHash = "sha256-HG4Z72vz/R7qWZy/8WaN5f/hxsODWnSo24+g36bZpfA=";
+        # outputHash = pkgs.lib.fakeHash;
       };
       in
       {
-        packages.${system} = {
-          "sight-list" = pkgs.stdenv.mkDerivation {
-            pname = sight-list-cargo-toml.package.name;
-            version = sight-list-cargo-toml.package.version;
-
-            src = sight-list-deps;
-
-            buildInputs = with pkgs; [
-              rust-bin-custom
-            ];
-
-            dontUnpack = true;
-            dontPatch = true;
-            dontConfigure = true;
-            buildPhase = ''
-              cd $src
-              mkdir -p $out/cargo_target
-              mkdir -p $out/bin
-              CARGO_HOME=$src/cargo_home CARGO_TARGET_DIR=$out/cargo_target cargo build --release --offline --frozen --verbose
-              cp $out/cargo_target/release/sightlist $out/bin/sightlist
-              rm -r $out/cargo_target
-              cp -r static $out/var
-              cp -r templates $out/var
-            '';
-            dontInstall = true;
-
-            # builder = ./builder.sh;
-          };
+        packages.${system}.default = pkgs.stdenv.mkDerivation {
+          pname = sight-list-cargo-toml.package.name;
+          version = sight-list-cargo-toml.package.version;
+          
+          src = sight-list-deps;
+          
+          buildInputs = with pkgs; [
+            rust-bin-custom
+          ];
+          
+          dontUnpack = true;
+          dontPatch = true;
+          dontConfigure = true;
+          buildPhase = ''
+            cd $src
+            mkdir -p $out/cargo_target
+            mkdir -p $out/bin
+            CARGO_HOME=$src/cargo_home CARGO_TARGET_DIR=$out/cargo_target cargo build --release --offline --frozen --verbose
+            cp $out/cargo_target/release/sightlist $out/bin/sightlist
+            rm -r $out/cargo_target
+            cp -r static $out/var
+            cp -r templates $out/var
+          '';
+          dontInstall = true;
+         # builder = ./builder.sh;
         };
-        # packages.default = webapp;
 
         devShells.${system}.default = pkgs.mkShell {
           name = "sight-list";
