@@ -36,5 +36,24 @@ export def nix-build [] {
 
 export def update [] {
   ^cargo update
+  {
+    "deps": (get-deps-hash),
+    "cargo_lock": (open Cargo.lock | hash sha256)
+  } | to toml | save -f hashes.toml
   ^nix flake update
+}
+
+def get-deps-hash [] {
+  let temp_path = $"/tmp/sight_list_deps_(random uuid)"
+  let cargo_home = $"($temp_path)/cargo_home"
+
+  mkdir $cargo_home
+  CARGO_HOME=$cargo_home cargo fetch -q --locked
+  rm $"($cargo_home)/.global-cache"
+
+  let hash_deps = nix hash path $temp_path
+
+  rm -r $temp_path
+
+  $hash_deps
 }

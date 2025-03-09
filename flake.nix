@@ -25,59 +25,39 @@
       };
 
       sight-list-cargo-toml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
+      hashes-toml = (builtins.fromTOML (builtins.readFile ./hashes.toml));
 
-      sight-list-deps = pkgs.stdenv.mkDerivation {
-        pname = "${sight-list-cargo-toml.package.name}-deps";
-        version = sight-list-cargo-toml.package.version;
-        src = ./.;
-        doCheck = false;
-        dontFixup = true;
-        nativeBuildInputs = with pkgs; [ rust-bin-custom ];
-        buildPhase = ''
-          runHook preBuild
-          cd $src
-          mkdir -p $out/cargo_home
-          CARGO_HOME=$out/cargo_home cargo fetch
-          runHook postBuild
-        '';
-        installPhase = ''
-          runHook preInstall
-          cp -r . $out
-          runHook postInstall
-        '';
+      sight-list-deps = derivation {
+        inherit system;
+        name = "${sight-list-cargo-toml.package.name}-${hashes-toml.cargo_lock}-deps";
+        builder = "${pkgs.nushell}/bin/nu";
+        buildInputs = with pkgs; [
+          rust-bin-custom
+        ];
+        args = [ ./builder.nu "fetch" ./. ];
+
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-3cvmF9p2f/zcxBKYt9jD+bGSonhTSuaAMdhx/sKIz3M=";
+        outputHash = hashes-toml.deps;
         # outputHash = pkgs.lib.fakeHash;
       };
-      in
-      {
-        packages.${system}.default = pkgs.stdenv.mkDerivation {
-          pname = sight-list-cargo-toml.package.name;
-          version = sight-list-cargo-toml.package.version;
-          
-          src = sight-list-deps;
-          
+
+      sight-list-bin = derivation {
+          inherit system;
+          name = "${sight-list-cargo-toml.package.name}-v${sight-list-cargo-toml.package.version}";
+          builder = "${pkgs.nushell}/bin/nu";
           buildInputs = with pkgs; [
+            gcc_multi
             rust-bin-custom
           ];
-          
-          dontUnpack = true;
-          dontPatch = true;
-          dontConfigure = true;
-          buildPhase = ''
-            cd $src
-            mkdir -p $out/cargo_target
-            mkdir -p $out/bin
-            CARGO_HOME=$src/cargo_home CARGO_TARGET_DIR=$out/cargo_target cargo build --release --offline --frozen --verbose
-            cp $out/cargo_target/release/sight-list $out/bin/sight-list
-            rm -r $out/cargo_target
-            mkdir -p $out/var
-            cp -r static $out/var
-            cp -r templates $out/var
-          '';
-          dontInstall = true;
-         # builder = ./builder.sh;
+          args = [ ./builder.nu "build" ./. sight-list-deps ];
+        };
+      in
+      {
+        packages.${system} = {
+          deps = sight-list-deps;
+          bin = sight-list-bin;
+          default = sight-list-bin;
         };
 
         devShells.${system}.default = pkgs.mkShell {
