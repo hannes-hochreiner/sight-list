@@ -4,17 +4,95 @@
 {{> head}}
 
 <body>
-  <h1>Sight<em>List</em></h1>
+  <h1>
+    <style>
+      @scope {
+        :scope {
+          font-weight: 100;
+          font-size: 2em;
+        }
+
+        em {
+          font-weight: 900;
+          font-style: normal;
+        }
+      }
+    </style>
+    <em>Sight</em>List
+  </h1>
   <div id="error"></div>
-  <div class="list">
-    <div class="container">
+  <div>
+    <style>
+      @scope {
+        :scope {
+          display: flex;
+          justify-content: space-between;
+          background-color: #ddd;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+        }
+
+        a {
+          text-decoration: none;
+          color: #000;
+        }
+
+        h1 {
+          padding: 0 .8rem;
+          font-weight: 100;
+          font-size: 2em;
+        }
+
+        h1 em {
+          font-weight: 900;
+          font-style: normal;
+        }
+
+        div.buttons {
+          display: flex;
+        }
+
+        div.button {
+          flex-grow: 1;
+          border: solid 1px hsl(0, 0%, 80%);
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          cursor: pointer;
+          background-color: hsl(0, 0%, 100%);
+          width: 48px;
+        }
+
+        div.button svg {
+          width: 24px;
+          height: 24px;
+          stroke: hsl(0, 0%, 30%);
+        }
+
+        div.buttons :nth-child(1) {
+          border-top-left-radius: 8px;
+          border-bottom-left-radius: 8px;
+        }
+  
+        div.buttons :nth-last-child(1) {
+          border-top-right-radius: 8px;
+          border-bottom-right-radius: 8px;
+        }
+      }
+    </style>
       <h1><a href="/">All Lists</a> &gt; <em>{{title}}</em></h1>
       <div class="buttons">
-        <div class="button" hx-get="/list/{{id}}/sight/new" hx-target="#sight-list-{{id}}" hx-swap="afterbegin"><img
-            src="/static/icons/add_FILL0_wght400_GRAD0_opsz24.svg" /></div>
+        <div class="button" hx-get="/list/{{id}}/sight/new" hx-target="#sight-list-{{id}}" hx-swap="afterbegin">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </div>
         <div class="button">
-          <a href="/list/{{id}}/kml" download="{{title}}.kml"><img
-              src="/static/icons/download_FILL0_wght400_GRAD0_opsz24.svg" /></a>
+          <a href="/list/{{id}}/kml" download="{{title}}.kml">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+          </a>
         </div>
         </div>
       </div>
@@ -35,7 +113,6 @@
       <div id="sight-list-{{id}}">
         {{> sight_list}}
       </div>
-    </div>
 </body>
 
 </html>

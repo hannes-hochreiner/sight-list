@@ -1,25 +1,98 @@
 {{#each sights}}
-<div id="sight-{{id}}" class="sight container">
-  <h1>{{title}}</h1>
-  <div>{{{description}}}</div>
-  <div class="buttons">
-    {{!-- <a href="https://openstreetmap.org/#map=13/{{lat}}/{{long}}" target=" _blank">
-      <div class="button"><img src="/static/icons/map_FILL0_wght400_GRAD0_opsz24.svg" /></div>
-    </a> --}}
-    <div class="button" hx-on:click="marker_{{js_id}}.openPopup(); map.panTo([{{lat}}, {{long}}]); location.href = '#map';"><img src="/static/icons/map_FILL0_wght400_GRAD0_opsz24.svg" /></div>
-    <div class="button" hx-get="/sight/{{id}}" hx-target="#sight-{{id}}" hx-swap="outerHTML">
-      <img src="/static/icons/edit_FILL0_wght400_GRAD0_opsz24.svg" />
+<div id="sight-{{id}}">
+  <style>
+    @scope {
+      :scope {
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+        background-color: white;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      a {
+        text-decoration: none;
+        color: #000;
+      }
+
+      header {
+        padding: 0 .8rem;
+        background-color: #ddd;
+        border-radius: 8px 8px 0 0;
+      }
+
+      main {
+        padding: 0 .8rem;
+        background-color: white;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        height: 40px;
+      }
+
+      footer :nth-child(1) {
+        border-radius: 0 0 0 8px;
+      }
+
+      footer :nth-last-child(1) {
+        border-radius: 0 0 8px 0;
+      }
+
+      footer .button {
+        flex-grow: 1;
+        border: solid 1px hsl(0, 0%, 80%);
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        cursor: pointer;
+      }
+
+      footer .button svg {
+        width: 24px;
+        height: 24px;
+        stroke: hsl(0, 0%, 30%);
+      }
+
+      header h1 {
+        font-weight: 900;
+        font-size: 1.8em;
+        font-style: normal;
+      }
+    }
+  </style>
+  <header>
+    <h1>{{title}}</h1>
+  </header>
+  <main>
+    <div>{{{description}}}</div>
+  </main>
+  <footer>
+    <div class="button" hx-on:click="marker_{{js_id}}.openPopup(); map.panTo([{{lat}}, {{long}}]); location.href = '#map';">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+      </svg>
     </div>
-    <a href="om://map?v=1&ll={{lat}},{{long}}"><div class="button">
+    <div class="button" hx-get="/sight/{{id}}" hx-target="#sight-{{id}}" hx-swap="outerHTML">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+      </svg>
+    </div>
+    <a href="om://map?v=1&ll={{lat}},{{long}}" class="button">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
       </svg>
-    </div></a>
+    </a>
     <div class="button" hx-delete="/sight/{{id}}" hx-target="#sight-{{id}}" hx-swap="outerHTML"
       hx-confirm="Are you sure you want to delete '{{title}}'?">
-      <img src="/static/icons/delete_FILL0_wght400_GRAD0_opsz24.svg" />
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+      </svg>
     </div>
-  </div>
+  </footer>
 </div>
 {{/each}}

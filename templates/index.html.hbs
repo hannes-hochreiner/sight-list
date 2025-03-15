@@ -4,17 +4,96 @@
 {{> head}}
 
 <body>
-  <h1>Sight<em>List</em></h1>
+  <h1>
+    <style>
+      @scope {
+        :scope {
+          font-weight: 100;
+          font-size: 2em;
+        }
+
+        em {
+          font-weight: 900;
+          font-style: normal;
+        }
+      }
+    </style>
+    <em>Sight</em>List
+  </h1>
   <div id="error"></div>
-  <div class="container">
+  <div>
+    <style>
+      @scope {
+        :scope {
+          display: flex;
+          justify-content: space-between;
+          background-color: #ddd;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+        }
+
+        h1 {
+          padding: 0 .8rem;
+          font-weight: 100;
+          font-size: 2em;
+        }
+
+        h1 em {
+          font-weight: 900;
+          font-style: normal;
+        }
+
+        div.buttons {
+          display: flex;
+        }
+
+        div.button {
+          flex-grow: 1;
+          border: solid 1px hsl(0, 0%, 80%);
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          cursor: pointer;
+          background-color: hsl(0, 0%, 100%);
+          width: 48px;
+        }
+
+        div.button svg {
+          width: 24px;
+          height: 24px;
+          stroke: hsl(0, 0%, 30%);
+        }
+
+        div.buttons :nth-child(1) {
+          border-top-left-radius: 8px;
+          border-bottom-left-radius: 8px;
+        }
+  
+        div.buttons :nth-last-child(1) {
+          border-top-right-radius: 8px;
+          border-bottom-right-radius: 8px;
+        }
+      }
+    </style>
     <h1>All Lists</h1>
     <div class="buttons">
       <div class="button" hx-get="/list/new" hx-target="#lists" hx-swap="afterbegin">
-        <img src="/static/icons/add_FILL0_wght400_GRAD0_opsz24.svg" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
       </div>
     </div>
   </div>
-  <div class="lists" id="lists">
+  <div id="lists">
+    <style>
+      @scope {
+        :scope {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+          gap: 1rem;
+        }
+      }
+    </style>
     {{> lists}}
   </div>
 </body>
