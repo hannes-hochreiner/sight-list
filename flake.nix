@@ -34,7 +34,7 @@
         buildInputs = with pkgs; [
           rust-bin-custom
         ];
-        args = [ ./builder.nu "fetch" ./. ];
+        args = [ ./builder.nu "vendor" ./. ];
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
@@ -50,7 +50,7 @@
             gcc_multi
             rust-bin-custom
           ];
-          args = [ ./builder.nu "build" ./. sight-list-deps ];
+          args = [ ./builder.nu "build" ./. sight-list-deps "sight-list" ];
         };
       in
       {
